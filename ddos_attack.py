@@ -5,43 +5,80 @@ import threading
 import time
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import Paragraph, Frame
 
 def create_pdf_report(attack_name, content):
     file_name = f"{attack_name}_{time.strftime('%Y-%m-%d_%H-%M-%S')}.pdf"
     file_path = filedialog.asksaveasfilename(defaultextension=".pdf", initialfile=file_name, filetypes=[("PDF files", "*.pdf")])
     if file_path:
         c = canvas.Canvas(file_path, pagesize=letter)
-        c.drawString(100, 750, attack_name)
-        c.drawString(100, 730, time.strftime('%Y-%m-%d %H:%M:%S'))
-        c.drawString(100, 710, "Report:")
-        
-        text = content.split('\n')
-        y = 690
-        for line in text:
-            c.drawString(100, y, line)
-            y -= 20
-            if y < 50:
+        width, height = letter
+
+        # Define styles
+        styles = getSampleStyleSheet()
+        title_style = styles['Title']
+        title_style.textColor = colors.darkblue
+        header_style = styles['Heading2']
+        header_style.textColor = colors.darkred
+        normal_style = styles['BodyText']
+        normal_style.textColor = colors.black
+        advice_style = ParagraphStyle(
+            'Advice',
+            parent=styles['BodyText'],
+            textColor=colors.green
+        )
+
+        # Draw header
+        c.setFont("Helvetica-Bold", 16)
+        c.setFillColor(colors.darkblue)
+        c.drawString(50, height - 50, attack_name)
+
+        c.setFont("Helvetica", 12)
+        c.setFillColor(colors.black)
+        c.drawString(50, height - 70, time.strftime('%Y-%m-%d %H:%M:%S'))
+
+        # Draw content
+        y = height - 100
+        for line in content.split('\n'):
+            if "Total requests sent" in line or "Target:" in line:
+                p = Paragraph(line, header_style)
+            else:
+                p = Paragraph(line, normal_style)
+            f = Frame(50, y, width - 100, 30, showBoundary=0)
+            f.addFromList([p], c)
+            y -= 30
+            if y < 100:
                 c.showPage()
-                y = 750
-        
-        # Ajouter les conseils de protection contre les attaques DDoS
-        conseils = [
-            "Conseils pour se protéger contre les attaques DDoS:",
+                y = height - 100
+
+        # Draw advice section
+        advice_title = Paragraph("Conseils pour se protéger contre les attaques DDoS:", header_style)
+        advice_content = [
             "1. Utiliser des services de protection contre les DDoS (ex. Cloudflare).",
             "2. Configurer des pare-feu et des systèmes de prévention d'intrusion (IPS).",
             "3. Mettre en place des limites de taux (rate limiting) pour les connexions.",
             "4. Surveiller le trafic réseau en temps réel pour détecter les anomalies.",
             "5. Avoir des plans de reprise après sinistre pour minimiser les temps d'arrêt."
         ]
-        for conseil in conseils:
-            c.drawString(100, y, conseil)
-            y -= 20
-            if y < 50:
+
+        c.showPage()
+        f = Frame(50, height - 100, width - 100, 30, showBoundary=0)
+        f.addFromList([advice_title], c)
+
+        y = height - 130
+        for advice in advice_content:
+            p = Paragraph(advice, advice_style)
+            f = Frame(50, y, width - 100, 30, showBoundary=0)
+            f.addFromList([p], c)
+            y -= 30
+            if y < 100:
                 c.showPage()
-                y = 750
-        
+                y = height - 100
+
         c.save()
-        messagebox.showinfo("Report Created", f"The report has been saved as {file_path}")
+        messagebox.showinfo("Rapport Créé", f"Le rapport a été enregistré sous {file_path}")
 
 def ddos_attack(target, port, duration, log_widget):
     request_count = 0
