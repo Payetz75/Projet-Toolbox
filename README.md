@@ -7,7 +7,7 @@ Pré-Requis :
 Pour utiliser cette toolbox de sécurité, un utilisateur doit:
 
 1. Avoir un système d'exploitation compatible (Windows, macOS ou Linux).
-2. Avoir Python 3.x et Pip installés.
+2. Avoir Python 3.11.6 et Pip installés.
 3. Installer Nmap.
 4. Installer les bibliothèques Python nécessaires via Pip.
 5. Disposer d'un accès Internet et éventuellement de permissions administratives.
