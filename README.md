@@ -1,6 +1,6 @@
 Toolbox Pentest
 
-Ce projet est une toolbox qui est accessible depuis une interface graphique, il suffit de lancer "main.py" pour l’exécuter et accéder a l'ensemble des fonctionnalités sans avoir a lancer chaque script individuellement.
+Ce projet est une toolbox de sécurité conçue pour évaluer la sécurité d'une entreprise à l'aide de plusieurs scripts d'attaque. Chaque test génère un rapport détaillé, incluant des recommandations de sécurité à suivre. Cette toolbox est accessible via une interface graphique conviviale. Pour l'exécuter, il suffit de lancer "main.py", permettant ainsi d'accéder à toutes les fonctionnalités sans avoir à exécuter chaque script individuellement.
 
 Pré-Requis :
 
